@@ -181,6 +181,13 @@ gofmt:
 	find . -not -path './vendor*' -name '*.go' -type f | \
 		xargs gofmt -s -w
 
+
+.PHONY: docs-dots
+docs-dots: $(patsubst %.dot, %.png, $(wildcard _docs/**/*.dot))
+
+%.png: %.dot
+	dot -Tpng "$<" > "$@"
+
 clean:
 	rm -f $(BINS) $(IMAGE_BINS)
 

@@ -1,0 +1,42 @@
+digraph states {
+  node [shape=record];
+
+  initial [
+    label = "{ deployment | group | order | bid | lease } | { active | open | - | - | - }"
+  ];
+
+  ordered [
+    label = "{ deployment | group | order | bid | lease } | { active | ordered | open | - | - }"
+  ];
+
+  orderedDeploymentClosed [
+    label = "{ deployment | group | order | bid | lease } | { closed | closed | closed | - | - }"
+  ];
+
+  bidCreated [
+    label = "{ deployment | group | order | bid | lease } | { active | ordered | open | open | - }"
+  ];
+
+  bidCreatedClosed [
+    label = "{ deployment | group | order | bid | lease } | { active | ordered | open | closed | - }"
+  ];
+
+  bidCreatedOrderClosed [
+    label = "{ deployment | group | order | bid | lease } | { active | open | closed | closed | - }"
+  ];
+
+  leaseCreated [
+    label = "{ deployment | group | order | bid | lease } | { active | matched | matched | matched | active }"
+  ];
+
+  initial -> ordered [label="end block"];
+  ordered -> orderedDeploymentClosed [label="MsgCloseDeployment"];
+
+  ordered -> bidCreated [label="MsgCreateBid"]
+
+  bidCreated -> bidCreatedClosed      [label="MsgCloseBid"];
+  bidCreated -> bidCreatedOrderClosed [label="MsgCloseOrder"];
+  bidCreatedOrderClosed -> initial [label="MsgCloseOrder"];
+
+
+}

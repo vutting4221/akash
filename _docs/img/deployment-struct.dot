@@ -1,0 +1,24 @@
+digraph struct {
+  node [shape=record];
+
+  deployment [
+    label = "{ { id | { owner | dseq } } | state | version }"
+  ];
+
+  group [
+    label = "{ { id | { owner | dseq | gseq } } | state | { spec | { name | requirements | resources } } }"
+  ];
+
+  order [
+    label = "{ { id | { owner | dseq | gseq | oseq } } | state | start-at | { spec | { name | requirements | resources } } }"
+  ];
+
+  bid [
+    label = "{ { id | { owner | dseq | gseq | oseq | provider } } | state | price }"
+  ];
+
+  lease [
+    label = "{ { id | { owner | dseq | gseq | oseq | provider } } | state | price }"
+  ];
+
+}
