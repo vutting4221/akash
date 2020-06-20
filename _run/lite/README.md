@@ -107,6 +107,12 @@ In a separate terminal, run the following command
 make provider-run
 ```
 
+Query the provider service gateway for its status:
+
+```sh
+make provider-status
+```
+
 ### Create a deployment
 
 Create a deployment from the `main` account with:
@@ -148,6 +154,12 @@ Eventually a lease will be generated.  You can see it with:
 
 ```sh
 make query-leases
+```
+
+
+_if_ you are running provider services, query the provider gateway:
+```sh
+make provider-status
 ```
 
 ### Terminate lease
