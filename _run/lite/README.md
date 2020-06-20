@@ -33,7 +33,7 @@ such that you don't need to override them for a simple pass-through of
 this example.
 
 |Name|Default|Description|
-|---|---|
+|---|---|---|
 |`KEY_NAME`|`main`|standard key name|
 |`PROVIDER_KEY_NAME`|`provider`|name of key to use for provider|
 |`DSEQ`|1|deployment sequence|
