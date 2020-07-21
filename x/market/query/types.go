@@ -43,6 +43,8 @@ type BidFilters struct {
 	StateFlagVal string
 	// Actual state value decoded from BidStateMap
 	State types.BidState
+	// Provider address
+	Provider sdk.AccAddress
 }
 
 // LeaseFilters defines flags for lease list filter
@@ -67,14 +69,14 @@ func (f OrderFilters) Accept(obj types.Order, isValidState bool) bool {
 }
 
 // Accept returns true if object matches filter requirements
+// TODO: Provider variable
 func (f BidFilters) Accept(obj types.Bid, isValidState bool) bool {
-	if (f.Owner.Empty() && !isValidState) ||
-		(f.Owner.Empty() && (obj.State == f.State)) ||
-		(!isValidState && obj.BidID.Owner.Equals(f.Owner)) ||
-		(obj.BidID.Owner.Equals(f.Owner) && obj.State == f.State) {
+	if (f.Owner.Empty() && !isValidState) || // No owner, invalid state
+		(f.Owner.Empty() && (obj.State == f.State)) || // No owner, matching states
+		(!isValidState && obj.BidID.Owner.Equals(f.Owner)) || // invalid state, OwnerID matches Owner
+		(obj.BidID.Owner.Equals(f.Owner) && obj.State == f.State) { // OwnerID matches owner, states match
 		return true
 	}
-
 	return false
 }
 

@@ -24,7 +24,7 @@ func MarkReqOrderIDFlags(cmd *cobra.Command) {
 
 // AddProviderFlag add provider flag to command flags set
 func AddProviderFlag(flags *pflag.FlagSet) {
-	flags.String("provider", "", "Provider")
+	flags.String("provider", "", "Provider to match")
 }
 
 // MarkReqProviderFlag marks provider flag as required
@@ -126,6 +126,7 @@ func OrderFiltersFromFlags(flags *pflag.FlagSet) (query.OrderFilters, error) {
 func AddBidFilterFlags(flags *pflag.FlagSet) {
 	flags.String("owner", "", "bid owner address to filter")
 	flags.String("state", "", "bid state to filter (open,matched,lost,closed)")
+	flags.String("provider", "", "bid provider address to filter")
 }
 
 // BidFiltersFromFlags returns BidFilters with given flags and error if occurred
@@ -134,9 +135,14 @@ func BidFiltersFromFlags(flags *pflag.FlagSet) (query.BidFilters, error) {
 	if err != nil {
 		return query.BidFilters{}, err
 	}
+	provider, err := ProviderFromFlagsWithoutCtx(flags)
+	if err != nil { // TODO: determine if errors are returned if the flag not present
+		return query.BidFilters{}, err
+	}
 	bfilters := query.BidFilters{
 		Owner:        ofilters.Owner,
 		StateFlagVal: ofilters.StateFlagVal,
+		Provider:     provider,
 	}
 	return bfilters, nil
 }
