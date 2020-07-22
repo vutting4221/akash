@@ -37,9 +37,8 @@ func OrderPath(id types.OrderID) string {
 }
 
 //getBidsPath returns bids path for queries
-// TODO: how to add Provider to the query?
 func getBidsPath(bfilters BidFilters) string {
-	return fmt.Sprintf("%s/%s/%v", bidsPath, bfilters.Owner, bfilters.StateFlagVal)
+	return fmt.Sprintf("%s/%s/%s/%s", bidsPath, bfilters.Owner, bfilters.StateFlagVal, bfilters.Provider)
 }
 
 // getBidPath return bid path of given bid id for queries
@@ -145,18 +144,29 @@ func parseBidFiltersPath(parts []string) (BidFilters, bool, error) {
 	if !owner.Empty() && sdk.VerifyAddressFormat(owner) != nil {
 		return BidFilters{}, false, ErrOwnerValue
 	}
-	// TODO: parse Provider field
 
 	state, ok := types.BidStateMap[parts[1]]
-
 	if !ok && (parts[1] != "") {
 		return BidFilters{}, false, ErrStateValue
+	}
+
+	// parse Provider field if exists
+	var provider sdk.AccAddress
+	if len(parts) == 3 {
+		provider, err = sdk.AccAddressFromBech32(parts[2])
+		if err != nil {
+			return BidFilters{}, false, err
+		}
+		if !provider.Empty() && sdk.VerifyAddressFormat(provider) != nil {
+			return BidFilters{}, false, ErrOwnerValue
+		}
 	}
 
 	return BidFilters{
 		Owner:        owner,
 		StateFlagVal: parts[1],
 		State:        state,
+		Provider:     provider,
 	}, ok, nil
 }
 

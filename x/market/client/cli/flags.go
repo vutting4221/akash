@@ -136,7 +136,7 @@ func BidFiltersFromFlags(flags *pflag.FlagSet) (query.BidFilters, error) {
 		return query.BidFilters{}, err
 	}
 	provider, err := ProviderFromFlagsWithoutCtx(flags)
-	if err != nil { // TODO: determine if errors are returned if the flag not present
+	if err != nil {
 		return query.BidFilters{}, err
 	}
 	bfilters := query.BidFilters{
