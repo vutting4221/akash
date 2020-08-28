@@ -15,6 +15,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	extv1 "k8s.io/api/extensions/v1beta1"
+	networkingv1 "k8s.io/api/networking/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -22,6 +23,8 @@ import (
 
 const (
 	akashManagedLabelName         = "akash.network"
+	akashNetworkLabelComponent    = "akash.network/component"
+	akashNetworkLabelTenant       = "akash.network/tenant-namespace"
 	akashManifestServiceLabelName = "akash.network/manifest-service"
 )
 
@@ -38,7 +41,8 @@ func (b *builder) ns() string {
 
 func (b *builder) labels() map[string]string {
 	return map[string]string{
-		akashManagedLabelName: "true",
+		akashNetworkLabelTenant: b.ns(),
+		akashManagedLabelName:   "true",
 	}
 }
 
@@ -67,6 +71,38 @@ func (b *nsBuilder) update(obj *corev1.Namespace) (*corev1.Namespace, error) { /
 	obj.Name = b.ns()
 	obj.Labels = b.labels()
 	return obj, nil
+}
+
+// networkPolicies builder
+type networkPolicyBuilder struct {
+	builder
+}
+
+func (n *networkPolicyBuilder) name() string {
+	return n.ns()
+}
+
+func (b *networkPolicyBuilder) create() ([]*networkingv1.NetworkPolicy, error) { // nolint:golint,unparam
+	return []*networkingv1.NetworkPolicy{
+		&networkingv1.NetworkPolicy{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:   b.ns(),
+				Labels: b.labels(),
+			},
+			Spec: networkingv1.NetworkPolicySpec{},
+		},
+	}, nil
+}
+
+func newNetPolBuilder(log log.Logger, settings settings, lid mtypes.LeaseID, group *manifest.Group, service *manifest.Service) *networkPolicyBuilder {
+	return &networkPolicyBuilder{
+		builder: builder{
+			settings: settings,
+			log:      log.With("module", "kube-builder"),
+			lid:      lid,
+			group:    group,
+		},
+	}
 }
 
 // deployment

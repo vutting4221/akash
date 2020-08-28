@@ -145,6 +145,8 @@ func (c *client) Deploy(ctx context.Context, lid mtypes.LeaseID, group *manifest
 		return err
 	}
 
+	// TODO: applyNetworkPolicies()
+
 	if err := applyManifest(ctx, c.ac, newManifestBuilder(c.log, c.settings, c.ns, lid, group)); err != nil {
 		c.log.Error("applying manifest", "err", err, "lease", lid)
 		return err

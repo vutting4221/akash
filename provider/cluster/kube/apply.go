@@ -27,6 +27,8 @@ func applyNS(ctx context.Context, kc kubernetes.Interface, b *nsBuilder) error {
 	return err
 }
 
+// applyNetworkPolicies(ctx context.Context, kc kuberenetes.Interface, np *npBuilder) error{}
+
 func applyDeployment(ctx context.Context, kc kubernetes.Interface, b *deploymentBuilder) error {
 	obj, err := kc.AppsV1().Deployments(b.ns()).Get(ctx, b.name(), metav1.GetOptions{})
 	switch {
