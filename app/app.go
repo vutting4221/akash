@@ -166,6 +166,11 @@ func NewApp(
 
 	app.keeper.upgrade = upgrade.NewKeeper(skipUpgradeHeights, app.keys[upgrade.StoreKey], app.cdc)
 
+	// no-op handler for "test-upgrade"
+	app.keeper.upgrade.SetUpgradeHandler("test-upgrade", func(ctx sdk.Context, plan upgrade.Plan) {
+
+	})
+
 	app.keeper.crisis = crisis.NewKeeper(
 		app.keeper.params.Subspace(crisis.DefaultParamspace),
 		app.invCheckPeriod,
