@@ -114,3 +114,14 @@ message DeploymentFilters {
       [(gogoproto.customname) = "DSeq", (gogoproto.jsontag) = "dseq", (gogoproto.moretags) = "yaml:\"dseq\""];
   string state = 3 [(gogoproto.jsontag) = "state", (gogoproto.moretags) = "yaml:\"state\""];
 }
+
+message EventCreateDep {
+  option (gogoproto.equal) = false;
+
+  DeploymentID deployment_id = 1 [
+    (gogoproto.nullable)   = false,
+    (gogoproto.customname) = "DeploymentID",
+    (gogoproto.jsontag)    = "id",
+    (gogoproto.moretags)   = "yaml:\"id\""
+  ];
+}

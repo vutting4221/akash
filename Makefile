@@ -70,7 +70,7 @@ endif
 ldflags += $(LDFLAGS)
 ldflags := $(strip $(ldflags))
 
-BUILD_FLAGS := -mod=readonly -tags "$(BUILD_TAGS)" -ldflags '$(ldflags)'
+BUILD_FLAGS := -tags "$(BUILD_TAGS)" -ldflags '$(ldflags)'
 # check for nostrip option
 ifeq (,$(findstring nostrip,$(BUILD_OPTIONS)))
 	BUILD_FLAGS += -trimpath

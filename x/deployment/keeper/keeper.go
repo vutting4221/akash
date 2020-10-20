@@ -105,9 +105,10 @@ func (k Keeper) Create(ctx sdk.Context, deployment types.Deployment, groups []ty
 		k.updateOpenGroupsIndex(ctx, group)
 	}
 
-	ctx.EventManager().EmitEvent(
-		types.NewEventDeploymentCreated(deployment.ID(), deployment.Version).
-			ToSDKEvent(),
+	ctx.EventManager().EmitTypedEvent(
+		&types.EventCreateDep{
+			DeploymentID: deployment.ID(),
+		},
 	)
 
 	return nil
