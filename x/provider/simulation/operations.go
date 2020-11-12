@@ -87,7 +87,7 @@ func SimulateMsgCreate(ak govtypes.AccountKeeper, bk bankkeeper.Keeper, k keeper
 
 		msg := types.NewMsgCreateProvider(simAccount.Address, cfg.Host, cfg.GetAttributes())
 
-		txGen := simappparams.MakeEncodingConfig().TxConfig
+		txGen := simappparams.MakeTestEncodingConfig().TxConfig
 		tx, err := helpers.GenTx(
 			txGen,
 			[]sdk.Msg{msg},
@@ -103,7 +103,7 @@ func SimulateMsgCreate(ak govtypes.AccountKeeper, bk bankkeeper.Keeper, k keeper
 			return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "unable to generate mock tx"), nil, err
 		}
 
-		_, _, err = app.Deliver(tx)
+		_, _, err = app.Deliver(txGen.TxEncoder(), tx)
 		if err != nil {
 			return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "unable to deliver mock tx"), nil, err
 		}
@@ -133,7 +133,13 @@ func SimulateMsgUpdate(ak govtypes.AccountKeeper, bk bankkeeper.Keeper, k keeper
 		i := r.Intn(len(providers))
 		provider := providers[i]
 
-		simAccount, found := simtypes.FindAccount(accounts, provider.Owner)
+		owner, convertErr := sdk.AccAddressFromBech32(provider.Owner)
+		if convertErr != nil {
+			return simtypes.NoOpMsg(types.ModuleName, types.MsgTypeUpdateProvider, "error while converting address"),
+				nil, convertErr
+		}
+
+		simAccount, found := simtypes.FindAccount(accounts, owner)
 		if !found {
 			return simtypes.NoOpMsg(types.ModuleName, types.MsgTypeUpdateProvider, "provider not found"),
 				nil, errors.Errorf("provider with %s not found", provider.Owner)
@@ -148,11 +154,11 @@ func SimulateMsgUpdate(ak govtypes.AccountKeeper, bk bankkeeper.Keeper, k keeper
 		}
 
 		msg := &types.MsgUpdateProvider{
-			Owner:   simAccount.Address,
+			Owner:   simAccount.Address.String(),
 			HostURI: provider.HostURI,
 		}
 
-		txGen := simappparams.MakeEncodingConfig().TxConfig
+		txGen := simappparams.MakeTestEncodingConfig().TxConfig
 		tx, err := helpers.GenTx(
 			txGen,
 			[]sdk.Msg{msg},
@@ -168,7 +174,7 @@ func SimulateMsgUpdate(ak govtypes.AccountKeeper, bk bankkeeper.Keeper, k keeper
 			return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "unable to generate mock tx"), nil, err
 		}
 
-		_, _, err = app.Deliver(tx)
+		_, _, err = app.Deliver(txGen.TxEncoder(), tx)
 		if err != nil {
 			return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "unable to deliver mock tx"), nil, err
 		}

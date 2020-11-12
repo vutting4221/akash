@@ -92,13 +92,18 @@ func SimulateMsgCreateBid(ak govtypes.AccountKeeper, ks keepers.Keepers) simtype
 		i = r.Intn(len(providers))
 		provider := providers[i]
 
-		simAccount, found := simtypes.FindAccount(accounts, provider.Owner)
+		ownerAddr, convertErr := sdk.AccAddressFromBech32(provider.Owner)
+		if convertErr != nil {
+			return simtypes.NoOpMsg(types.ModuleName, types.MsgTypeCreateBid, "error while converting address"), nil, convertErr
+		}
+
+		simAccount, found := simtypes.FindAccount(accounts, ownerAddr)
 		if !found {
 			return simtypes.NoOpMsg(types.ModuleName, types.MsgTypeCreateBid, "unable to find provider"),
 				nil, errors.Errorf("provider with %s not found", provider.Owner)
 		}
 
-		if provider.Owner.Equals(order.ID().Owner) {
+		if provider.Owner == order.ID().Owner {
 			return simtypes.NoOpMsg(types.ModuleName, types.MsgTypeCreateBid, "provider and order owner cannot be same"),
 				nil, nil
 		}
@@ -113,7 +118,7 @@ func SimulateMsgCreateBid(ak govtypes.AccountKeeper, ks keepers.Keepers) simtype
 
 		msg := types.NewMsgCreateBid(order.OrderID, simAccount.Address, order.Price())
 
-		txGen := simappparams.MakeEncodingConfig().TxConfig
+		txGen := simappparams.MakeTestEncodingConfig().TxConfig
 		tx, err := helpers.GenTx(
 			txGen,
 			[]sdk.Msg{msg},
@@ -128,7 +133,7 @@ func SimulateMsgCreateBid(ak govtypes.AccountKeeper, ks keepers.Keepers) simtype
 			return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "unable to generate mock tx"), nil, err
 		}
 
-		_, _, err = app.Deliver(tx)
+		_, _, err = app.Deliver(txGen.TxEncoder(), tx)
 		switch {
 		case err == nil:
 			return simtypes.NewOperationMsg(msg, true, ""), nil, nil
@@ -166,7 +171,12 @@ func SimulateMsgCloseBid(ak govtypes.AccountKeeper, ks keepers.Keepers) simtypes
 		i := r.Intn(len(bids))
 		bid := bids[i]
 
-		simAccount, found := simtypes.FindAccount(accounts, bid.ID().Provider)
+		providerAddr, convertErr := sdk.AccAddressFromBech32(bid.ID().Provider)
+		if convertErr != nil {
+			return simtypes.NoOpMsg(types.ModuleName, types.MsgTypeCloseBid, "error while converting address"), nil, convertErr
+		}
+
+		simAccount, found := simtypes.FindAccount(accounts, providerAddr)
 		if !found {
 			return simtypes.NoOpMsg(types.ModuleName, types.MsgTypeCloseBid, "unable to find bid with provider"),
 				nil, errors.Errorf("bid with %s not found", bid.ID().Provider)
@@ -182,7 +192,7 @@ func SimulateMsgCloseBid(ak govtypes.AccountKeeper, ks keepers.Keepers) simtypes
 
 		msg := types.NewMsgCloseBid(bid.BidID)
 
-		txGen := simappparams.MakeEncodingConfig().TxConfig
+		txGen := simappparams.MakeTestEncodingConfig().TxConfig
 		tx, err := helpers.GenTx(
 			txGen,
 			[]sdk.Msg{msg},
@@ -197,7 +207,7 @@ func SimulateMsgCloseBid(ak govtypes.AccountKeeper, ks keepers.Keepers) simtypes
 			return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "unable to generate mock tx"), nil, err
 		}
 
-		_, _, err = app.Deliver(tx)
+		_, _, err = app.Deliver(txGen.TxEncoder(), tx)
 		if err != nil {
 			return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "unable to deliver tx"), nil, err
 		}
@@ -219,7 +229,12 @@ func SimulateMsgCloseOrder(ak govtypes.AccountKeeper, ks keepers.Keepers) simtyp
 		i := r.Intn(len(orders))
 		order := orders[i]
 
-		simAccount, found := simtypes.FindAccount(accounts, order.ID().Owner)
+		ownerAddr, convertErr := sdk.AccAddressFromBech32(order.ID().Owner)
+		if convertErr != nil {
+			return simtypes.NoOpMsg(types.ModuleName, types.MsgTypeCloseOrder, "error while converting address"), nil, convertErr
+		}
+
+		simAccount, found := simtypes.FindAccount(accounts, ownerAddr)
 		if !found {
 			return simtypes.NoOpMsg(types.ModuleName, types.MsgTypeCloseOrder, "unable to find order"),
 				nil, errors.Errorf("order with %s not found", order.ID().Owner)
@@ -235,7 +250,7 @@ func SimulateMsgCloseOrder(ak govtypes.AccountKeeper, ks keepers.Keepers) simtyp
 
 		msg := types.NewMsgCloseOrder(order.OrderID)
 
-		txGen := simappparams.MakeEncodingConfig().TxConfig
+		txGen := simappparams.MakeTestEncodingConfig().TxConfig
 		tx, err := helpers.GenTx(
 			txGen,
 			[]sdk.Msg{msg},
@@ -250,7 +265,7 @@ func SimulateMsgCloseOrder(ak govtypes.AccountKeeper, ks keepers.Keepers) simtyp
 			return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "unable to generate mock tx"), nil, err
 		}
 
-		_, _, err = app.Deliver(tx)
+		_, _, err = app.Deliver(txGen.TxEncoder(), tx)
 		if err != nil {
 			return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "unable to deliver tx"), nil, err
 		}

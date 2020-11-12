@@ -6,6 +6,21 @@ import "akash/deployment/v1beta1/group.proto";
 
 option go_package = "github.com/ovrclk/akash/x/deployment/types";
 
+// Msg defines the deployment Msg service.
+service Msg {
+  // CreateDeployment defines a method to create new deployment given proper inputs.
+  rpc CreateDeployment(MsgCreateDeployment) returns (MsgCreateDeploymentResponse);
+
+  // UpdateDeployment defines a method to update a deployment given proper inputs.
+  rpc UpdateDeployment(MsgUpdateDeployment) returns (MsgUpdateDeploymentResponse);
+
+  // CloseDeployment defines a method to close a deployment given proper inputs.
+  rpc CloseDeployment(MsgCloseDeployment) returns (MsgCloseDeploymentResponse);
+
+  // CloseGroup defines a method to close a group of a deployment given proper inputs.
+  rpc CloseGroup(MsgCloseGroup) returns (MsgCloseGroupResponse);
+}
+
 // MsgCreateDeployment defines an SDK message for creating deployment
 message MsgCreateDeployment {
   option (gogoproto.equal) = false;
@@ -20,6 +35,9 @@ message MsgCreateDeployment {
       [(gogoproto.nullable) = false, (gogoproto.jsontag) = "groups", (gogoproto.moretags) = "yaml:\"groups\""];
   bytes version = 3 [(gogoproto.jsontag) = "version", (gogoproto.moretags) = "yaml:\"version\""];
 }
+
+// MsgCreateDeploymentResponse defines the Msg/CreateDeployment response type.
+message MsgCreateDeploymentResponse {}
 
 // MsgUpdateDeployment defines an SDK message for updating deployment
 message MsgUpdateDeployment {
@@ -36,9 +54,12 @@ message MsgUpdateDeployment {
   bytes version = 3 [(gogoproto.jsontag) = "version", (gogoproto.moretags) = "yaml:\"version\""];
 }
 
+// MsgUpdateDeploymentResponse defines the Msg/UpdateDeployment response type.
+message MsgUpdateDeploymentResponse {}
+
 // MsgCloseDeployment defines an SDK message for closing deployment
 message MsgCloseDeployment {
-  option (gogoproto.equal) = true;
+  option (gogoproto.equal) = false;
 
   DeploymentID id = 1 [
     (gogoproto.nullable)   = false,
@@ -48,17 +69,16 @@ message MsgCloseDeployment {
   ];
 }
 
+// MsgCloseDeploymentResponse defines the Msg/CloseDeployment response type.
+message MsgCloseDeploymentResponse {}
+
 // DeploymentID stores owner and sequence number
 message DeploymentID {
-  option (gogoproto.equal)            = true;
+  option (gogoproto.equal)            = false;
   option (gogoproto.goproto_stringer) = false;
 
-  bytes owner = 1 [
-    (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
-    (gogoproto.jsontag)  = "owner",
-    (gogoproto.moretags) = "yaml:\"owner\""
-  ];
-  uint64 dseq = 2
+  string owner = 1 [(gogoproto.jsontag) = "owner", (gogoproto.moretags) = "yaml:\"owner\""];
+  uint64 dseq  = 2
       [(gogoproto.customname) = "DSeq", (gogoproto.jsontag) = "dseq", (gogoproto.moretags) = "yaml:\"dseq\""];
 }
 
@@ -105,12 +125,8 @@ message DeploymentResponse {
 message DeploymentFilters {
   option (gogoproto.equal) = false;
 
-  bytes owner = 1 [
-    (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
-    (gogoproto.jsontag)  = "owner",
-    (gogoproto.moretags) = "yaml:\"owner\""
-  ];
-  uint64 dseq = 2
+  string owner = 1 [(gogoproto.jsontag) = "owner", (gogoproto.moretags) = "yaml:\"owner\""];
+  uint64 dseq  = 2
       [(gogoproto.customname) = "DSeq", (gogoproto.jsontag) = "dseq", (gogoproto.moretags) = "yaml:\"dseq\""];
   string state = 3 [(gogoproto.jsontag) = "state", (gogoproto.moretags) = "yaml:\"state\""];
 }

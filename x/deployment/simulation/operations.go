@@ -91,7 +91,7 @@ func SimulateMsgCreateDeployment(ak govtypes.AccountKeeper, bk bankkeeper.Keeper
 		simAccount, _ := simtypes.RandomAcc(r, accounts)
 
 		dID := types.DeploymentID{
-			Owner: simAccount.Address,
+			Owner: simAccount.Address.String(),
 			DSeq:  uint64(ctx.BlockHeight()),
 		}
 
@@ -130,7 +130,7 @@ func SimulateMsgCreateDeployment(ak govtypes.AccountKeeper, bk bankkeeper.Keeper
 			msg.Groups = append(msg.Groups, *spec)
 		}
 
-		txGen := simappparams.MakeEncodingConfig().TxConfig
+		txGen := simappparams.MakeTestEncodingConfig().TxConfig
 		tx, err := helpers.GenTx(
 			txGen,
 			[]sdk.Msg{msg},
@@ -145,7 +145,7 @@ func SimulateMsgCreateDeployment(ak govtypes.AccountKeeper, bk bankkeeper.Keeper
 			return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "unable to generate mock tx"), nil, err
 		}
 
-		_, _, err = app.Deliver(tx)
+		_, _, err = app.Deliver(txGen.TxEncoder(), tx)
 		if err != nil {
 			return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "unable to deliver mock tx"), nil, err
 		}
@@ -174,7 +174,12 @@ func SimulateMsgUpdateDeployment(ak govtypes.AccountKeeper, bk bankkeeper.Keeper
 		i := r.Intn(len(deployments))
 		deployment := deployments[i]
 
-		simAccount, found := simtypes.FindAccount(accounts, deployment.ID().Owner)
+		owner, convertErr := sdk.AccAddressFromBech32(deployment.ID().Owner)
+		if convertErr != nil {
+			return simtypes.NoOpMsg(types.ModuleName, types.MsgTypeUpdateDeployment, "error while converting address"), nil, convertErr
+		}
+
+		simAccount, found := simtypes.FindAccount(accounts, owner)
 		if !found {
 			return simtypes.NoOpMsg(types.ModuleName, types.MsgTypeUpdateDeployment, "unable to find deployment with given id"),
 				nil, errors.Errorf("deployment with %s not found", deployment.ID().Owner)
@@ -210,7 +215,7 @@ func SimulateMsgUpdateDeployment(ak govtypes.AccountKeeper, bk bankkeeper.Keeper
 			msg.Groups = append(msg.Groups, *spec)
 		}
 
-		txGen := simappparams.MakeEncodingConfig().TxConfig
+		txGen := simappparams.MakeTestEncodingConfig().TxConfig
 		tx, err := helpers.GenTx(
 			txGen,
 			[]sdk.Msg{msg},
@@ -225,7 +230,7 @@ func SimulateMsgUpdateDeployment(ak govtypes.AccountKeeper, bk bankkeeper.Keeper
 			return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "unable to generate mock tx"), nil, err
 		}
 
-		_, _, err = app.Deliver(tx)
+		_, _, err = app.Deliver(txGen.TxEncoder(), tx)
 		if err != nil {
 			return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "unable to deliver mock tx"), nil, err
 		}
@@ -256,7 +261,12 @@ func SimulateMsgCloseDeployment(ak govtypes.AccountKeeper, bk bankkeeper.Keeper,
 		i := r.Intn(len(deployments))
 		deployment := deployments[i]
 
-		simAccount, found := simtypes.FindAccount(accounts, deployment.ID().Owner)
+		owner, convertErr := sdk.AccAddressFromBech32(deployment.ID().Owner)
+		if convertErr != nil {
+			return simtypes.NoOpMsg(types.ModuleName, types.MsgTypeCloseDeployment, "error while converting address"), nil, convertErr
+		}
+
+		simAccount, found := simtypes.FindAccount(accounts, owner)
 		if !found {
 			return simtypes.NoOpMsg(types.ModuleName, types.MsgTypeCloseDeployment, "unable to find deployment"), nil,
 				errors.Errorf("deployment with %s not found", deployment.ID().Owner)
@@ -272,7 +282,7 @@ func SimulateMsgCloseDeployment(ak govtypes.AccountKeeper, bk bankkeeper.Keeper,
 
 		msg := types.NewMsgCloseDeployment(deployment.ID())
 
-		txGen := simappparams.MakeEncodingConfig().TxConfig
+		txGen := simappparams.MakeTestEncodingConfig().TxConfig
 		tx, err := helpers.GenTx(
 			txGen,
 			[]sdk.Msg{msg},
@@ -287,7 +297,7 @@ func SimulateMsgCloseDeployment(ak govtypes.AccountKeeper, bk bankkeeper.Keeper,
 			return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "unable to generate mock tx"), nil, err
 		}
 
-		_, _, err = app.Deliver(tx)
+		_, _, err = app.Deliver(txGen.TxEncoder(), tx)
 		if err != nil {
 			return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "unable to deliver mock tx"), nil, err
 		}
@@ -318,7 +328,12 @@ func SimulateMsgCloseGroup(ak govtypes.AccountKeeper, bk bankkeeper.Keeper, k ke
 		i := r.Intn(len(deployments))
 		deployment := deployments[i]
 
-		simAccount, found := simtypes.FindAccount(accounts, deployment.ID().Owner)
+		owner, convertErr := sdk.AccAddressFromBech32(deployment.ID().Owner)
+		if convertErr != nil {
+			return simtypes.NoOpMsg(types.ModuleName, types.MsgTypeCloseGroup, "error while converting address"), nil, convertErr
+		}
+
+		simAccount, found := simtypes.FindAccount(accounts, owner)
 		if !found {
 			err := errors.Errorf("deployment with %s not found", deployment.ID().Owner)
 			return simtypes.NoOpMsg(types.ModuleName, types.MsgTypeCloseGroup, err.Error()), nil, err
@@ -352,7 +367,7 @@ func SimulateMsgCloseGroup(ak govtypes.AccountKeeper, bk bankkeeper.Keeper, k ke
 			return simtypes.NoOpMsg(types.ModuleName, types.MsgTypeCloseGroup, "msg validation failure"), nil, err
 		}
 
-		txGen := simappparams.MakeEncodingConfig().TxConfig
+		txGen := simappparams.MakeTestEncodingConfig().TxConfig
 		tx, err := helpers.GenTx(
 			txGen,
 			[]sdk.Msg{msg},
@@ -367,7 +382,7 @@ func SimulateMsgCloseGroup(ak govtypes.AccountKeeper, bk bankkeeper.Keeper, k ke
 			return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "unable to generate mock tx"), nil, err
 		}
 
-		_, _, err = app.Deliver(tx)
+		_, _, err = app.Deliver(txGen.TxEncoder(), tx)
 		if err != nil {
 			err = errors.Wrapf(err, "%s: msg delivery error closing group: %v", types.ModuleName, group.ID())
 			return simtypes.NoOpMsg(types.ModuleName, msg.Type(), err.Error()), nil, err

@@ -6,15 +6,23 @@ import "akash/base/v1beta1/attribute.proto";
 
 option go_package = "github.com/ovrclk/akash/x/provider/types";
 
+// Msg defines the provider Msg service
+service Msg {
+  // CreateProvider defines a method that creates a provider given the proper inputs
+  rpc CreateProvider(MsgCreateProvider) returns (MsgCreateProviderResponse);
+
+  // UpdateProvider defines a method that updates a provider given the proper inputs
+  rpc UpdateProvider(MsgUpdateProvider) returns (MsgUpdateProviderResponse);
+
+  // DeleteProvider defines a method that deletes a provider given the proper inputs
+  rpc DeleteProvider(MsgDeleteProvider) returns (MsgDeleteProviderResponse);
+}
+
 // MsgCreateProvider defines an SDK message for creating a provider
 message MsgCreateProvider {
   option (gogoproto.equal) = false;
 
-  bytes owner = 1 [
-    (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
-    (gogoproto.jsontag)  = "owner",
-    (gogoproto.moretags) = "yaml:\"owner\""
-  ];
+  string owner    = 1 [(gogoproto.jsontag) = "owner", (gogoproto.moretags) = "yaml:\"owner\""];
   string host_uri = 2 [
     (gogoproto.customname) = "HostURI",
     (gogoproto.jsontag)    = "host-uri",
@@ -27,16 +35,15 @@ message MsgCreateProvider {
     (gogoproto.moretags)     = "yaml:\"attributes\""
   ];
 }
+
+// MsgCreateProviderResponse defines the Msg/CreateProvider response type.
+message MsgCreateProviderResponse {}
 
 // MsgUpdateProvider defines an SDK message for updating a provider
 message MsgUpdateProvider {
   option (gogoproto.equal) = false;
 
-  bytes owner = 1 [
-    (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
-    (gogoproto.jsontag)  = "owner",
-    (gogoproto.moretags) = "yaml:\"owner\""
-  ];
+  string owner    = 1 [(gogoproto.jsontag) = "owner", (gogoproto.moretags) = "yaml:\"owner\""];
   string host_uri = 2 [
     (gogoproto.customname) = "HostURI",
     (gogoproto.jsontag)    = "host-uri",
@@ -50,27 +57,25 @@ message MsgUpdateProvider {
   ];
 }
 
+// MsgUpdateProviderResponse defines the Msg/UpdateProvider response type.
+message MsgUpdateProviderResponse {}
+
 // MsgDeleteProvider defines an SDK message for deleting a provider
 message MsgDeleteProvider {
   option (gogoproto.equal) = false;
 
-  bytes owner = 1 [
-    (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
-    (gogoproto.jsontag)  = "owner",
-    (gogoproto.moretags) = "yaml:\"owner\""
-  ];
+  string owner = 1 [(gogoproto.jsontag) = "owner", (gogoproto.moretags) = "yaml:\"owner\""];
 }
+
+// MsgDeleteProviderResponse defines the Msg/DeleteProvider response type.
+message MsgDeleteProviderResponse {}
 
 // Provider stores owner and host details
 message Provider {
   option (gogoproto.equal)            = false;
   option (gogoproto.goproto_stringer) = false;
 
-  bytes owner = 1 [
-    (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
-    (gogoproto.jsontag)  = "owner",
-    (gogoproto.moretags) = "yaml:\"owner\""
-  ];
+  string owner    = 1 [(gogoproto.jsontag) = "owner", (gogoproto.moretags) = "yaml:\"owner\""];
   string host_uri = 2 [
     (gogoproto.customname) = "HostURI",
     (gogoproto.jsontag)    = "host-uri",

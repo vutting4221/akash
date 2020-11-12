@@ -4,11 +4,14 @@
 package types
 
 import (
-	bytes "bytes"
+	context "context"
 	fmt "fmt"
-	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
 	_ "github.com/gogo/protobuf/gogoproto"
+	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
+	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	io "io"
 	math "math"
 	math_bits "math/bits"
@@ -54,7 +57,7 @@ func (x Deployment_State) String() string {
 }
 
 func (Deployment_State) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_bfe50ba12f1404bf, []int{4, 0}
+	return fileDescriptor_bfe50ba12f1404bf, []int{7, 0}
 }
 
 // MsgCreateDeployment defines an SDK message for creating deployment
@@ -118,6 +121,43 @@ func (m *MsgCreateDeployment) GetVersion() []byte {
 	return nil
 }
 
+// MsgCreateDeploymentResponse defines the Msg/CreateDeployment response type.
+type MsgCreateDeploymentResponse struct {
+}
+
+func (m *MsgCreateDeploymentResponse) Reset()         { *m = MsgCreateDeploymentResponse{} }
+func (m *MsgCreateDeploymentResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgCreateDeploymentResponse) ProtoMessage()    {}
+func (*MsgCreateDeploymentResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_bfe50ba12f1404bf, []int{1}
+}
+func (m *MsgCreateDeploymentResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgCreateDeploymentResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgCreateDeploymentResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgCreateDeploymentResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCreateDeploymentResponse.Merge(m, src)
+}
+func (m *MsgCreateDeploymentResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgCreateDeploymentResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCreateDeploymentResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgCreateDeploymentResponse proto.InternalMessageInfo
+
 // MsgUpdateDeployment defines an SDK message for updating deployment
 type MsgUpdateDeployment struct {
 	ID      DeploymentID `protobuf:"bytes,1,opt,name=id,proto3" json:"id" yaml:"id"`
@@ -129,7 +169,7 @@ func (m *MsgUpdateDeployment) Reset()         { *m = MsgUpdateDeployment{} }
 func (m *MsgUpdateDeployment) String() string { return proto.CompactTextString(m) }
 func (*MsgUpdateDeployment) ProtoMessage()    {}
 func (*MsgUpdateDeployment) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bfe50ba12f1404bf, []int{1}
+	return fileDescriptor_bfe50ba12f1404bf, []int{2}
 }
 func (m *MsgUpdateDeployment) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -179,6 +219,43 @@ func (m *MsgUpdateDeployment) GetVersion() []byte {
 	return nil
 }
 
+// MsgUpdateDeploymentResponse defines the Msg/UpdateDeployment response type.
+type MsgUpdateDeploymentResponse struct {
+}
+
+func (m *MsgUpdateDeploymentResponse) Reset()         { *m = MsgUpdateDeploymentResponse{} }
+func (m *MsgUpdateDeploymentResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgUpdateDeploymentResponse) ProtoMessage()    {}
+func (*MsgUpdateDeploymentResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_bfe50ba12f1404bf, []int{3}
+}
+func (m *MsgUpdateDeploymentResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUpdateDeploymentResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUpdateDeploymentResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUpdateDeploymentResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUpdateDeploymentResponse.Merge(m, src)
+}
+func (m *MsgUpdateDeploymentResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUpdateDeploymentResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUpdateDeploymentResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUpdateDeploymentResponse proto.InternalMessageInfo
+
 // MsgCloseDeployment defines an SDK message for closing deployment
 type MsgCloseDeployment struct {
 	ID DeploymentID `protobuf:"bytes,1,opt,name=id,proto3" json:"id" yaml:"id"`
@@ -188,7 +265,7 @@ func (m *MsgCloseDeployment) Reset()         { *m = MsgCloseDeployment{} }
 func (m *MsgCloseDeployment) String() string { return proto.CompactTextString(m) }
 func (*MsgCloseDeployment) ProtoMessage()    {}
 func (*MsgCloseDeployment) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bfe50ba12f1404bf, []int{2}
+	return fileDescriptor_bfe50ba12f1404bf, []int{4}
 }
 func (m *MsgCloseDeployment) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -224,16 +301,53 @@ func (m *MsgCloseDeployment) GetID() DeploymentID {
 	return DeploymentID{}
 }
 
+// MsgCloseDeploymentResponse defines the Msg/CloseDeployment response type.
+type MsgCloseDeploymentResponse struct {
+}
+
+func (m *MsgCloseDeploymentResponse) Reset()         { *m = MsgCloseDeploymentResponse{} }
+func (m *MsgCloseDeploymentResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgCloseDeploymentResponse) ProtoMessage()    {}
+func (*MsgCloseDeploymentResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_bfe50ba12f1404bf, []int{5}
+}
+func (m *MsgCloseDeploymentResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgCloseDeploymentResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgCloseDeploymentResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgCloseDeploymentResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCloseDeploymentResponse.Merge(m, src)
+}
+func (m *MsgCloseDeploymentResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgCloseDeploymentResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCloseDeploymentResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgCloseDeploymentResponse proto.InternalMessageInfo
+
 // DeploymentID stores owner and sequence number
 type DeploymentID struct {
-	Owner github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,1,opt,name=owner,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"owner" yaml:"owner"`
-	DSeq  uint64                                        `protobuf:"varint,2,opt,name=dseq,proto3" json:"dseq" yaml:"dseq"`
+	Owner string `protobuf:"bytes,1,opt,name=owner,proto3" json:"owner" yaml:"owner"`
+	DSeq  uint64 `protobuf:"varint,2,opt,name=dseq,proto3" json:"dseq" yaml:"dseq"`
 }
 
 func (m *DeploymentID) Reset()      { *m = DeploymentID{} }
 func (*DeploymentID) ProtoMessage() {}
 func (*DeploymentID) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bfe50ba12f1404bf, []int{3}
+	return fileDescriptor_bfe50ba12f1404bf, []int{6}
 }
 func (m *DeploymentID) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -262,11 +376,11 @@ func (m *DeploymentID) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_DeploymentID proto.InternalMessageInfo
 
-func (m *DeploymentID) GetOwner() github_com_cosmos_cosmos_sdk_types.AccAddress {
+func (m *DeploymentID) GetOwner() string {
 	if m != nil {
 		return m.Owner
 	}
-	return nil
+	return ""
 }
 
 func (m *DeploymentID) GetDSeq() uint64 {
@@ -287,7 +401,7 @@ func (m *Deployment) Reset()         { *m = Deployment{} }
 func (m *Deployment) String() string { return proto.CompactTextString(m) }
 func (*Deployment) ProtoMessage()    {}
 func (*Deployment) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bfe50ba12f1404bf, []int{4}
+	return fileDescriptor_bfe50ba12f1404bf, []int{7}
 }
 func (m *Deployment) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -347,7 +461,7 @@ type DeploymentResponse struct {
 func (m *DeploymentResponse) Reset()      { *m = DeploymentResponse{} }
 func (*DeploymentResponse) ProtoMessage() {}
 func (*DeploymentResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bfe50ba12f1404bf, []int{5}
+	return fileDescriptor_bfe50ba12f1404bf, []int{8}
 }
 func (m *DeploymentResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -399,16 +513,16 @@ func (m *DeploymentResponse) GetVersion() []byte {
 
 // DeploymentFilters defines filters used to filter deployments
 type DeploymentFilters struct {
-	Owner github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,1,opt,name=owner,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"owner" yaml:"owner"`
-	DSeq  uint64                                        `protobuf:"varint,2,opt,name=dseq,proto3" json:"dseq" yaml:"dseq"`
-	State string                                        `protobuf:"bytes,3,opt,name=state,proto3" json:"state" yaml:"state"`
+	Owner string `protobuf:"bytes,1,opt,name=owner,proto3" json:"owner" yaml:"owner"`
+	DSeq  uint64 `protobuf:"varint,2,opt,name=dseq,proto3" json:"dseq" yaml:"dseq"`
+	State string `protobuf:"bytes,3,opt,name=state,proto3" json:"state" yaml:"state"`
 }
 
 func (m *DeploymentFilters) Reset()         { *m = DeploymentFilters{} }
 func (m *DeploymentFilters) String() string { return proto.CompactTextString(m) }
 func (*DeploymentFilters) ProtoMessage()    {}
 func (*DeploymentFilters) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bfe50ba12f1404bf, []int{6}
+	return fileDescriptor_bfe50ba12f1404bf, []int{9}
 }
 func (m *DeploymentFilters) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -437,11 +551,11 @@ func (m *DeploymentFilters) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_DeploymentFilters proto.InternalMessageInfo
 
-func (m *DeploymentFilters) GetOwner() github_com_cosmos_cosmos_sdk_types.AccAddress {
+func (m *DeploymentFilters) GetOwner() string {
 	if m != nil {
 		return m.Owner
 	}
-	return nil
+	return ""
 }
 
 func (m *DeploymentFilters) GetDSeq() uint64 {
@@ -466,7 +580,7 @@ func (m *EventCreateDep) Reset()         { *m = EventCreateDep{} }
 func (m *EventCreateDep) String() string { return proto.CompactTextString(m) }
 func (*EventCreateDep) ProtoMessage()    {}
 func (*EventCreateDep) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bfe50ba12f1404bf, []int{7}
+	return fileDescriptor_bfe50ba12f1404bf, []int{10}
 }
 func (m *EventCreateDep) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -505,8 +619,11 @@ func (m *EventCreateDep) GetDeploymentID() DeploymentID {
 func init() {
 	proto.RegisterEnum("akash.deployment.v1beta1.Deployment_State", Deployment_State_name, Deployment_State_value)
 	proto.RegisterType((*MsgCreateDeployment)(nil), "akash.deployment.v1beta1.MsgCreateDeployment")
+	proto.RegisterType((*MsgCreateDeploymentResponse)(nil), "akash.deployment.v1beta1.MsgCreateDeploymentResponse")
 	proto.RegisterType((*MsgUpdateDeployment)(nil), "akash.deployment.v1beta1.MsgUpdateDeployment")
+	proto.RegisterType((*MsgUpdateDeploymentResponse)(nil), "akash.deployment.v1beta1.MsgUpdateDeploymentResponse")
 	proto.RegisterType((*MsgCloseDeployment)(nil), "akash.deployment.v1beta1.MsgCloseDeployment")
+	proto.RegisterType((*MsgCloseDeploymentResponse)(nil), "akash.deployment.v1beta1.MsgCloseDeploymentResponse")
 	proto.RegisterType((*DeploymentID)(nil), "akash.deployment.v1beta1.DeploymentID")
 	proto.RegisterType((*Deployment)(nil), "akash.deployment.v1beta1.Deployment")
 	proto.RegisterType((*DeploymentResponse)(nil), "akash.deployment.v1beta1.DeploymentResponse")
@@ -519,103 +636,253 @@ func init() {
 }
 
 var fileDescriptor_bfe50ba12f1404bf = []byte{
-	// 687 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x55, 0xcf, 0x4f, 0xd4, 0x40,
-	0x14, 0x6e, 0xcb, 0x02, 0x32, 0x2c, 0x64, 0x19, 0x89, 0x59, 0x37, 0xa1, 0xd3, 0x54, 0x22, 0x2b,
-	0x09, 0x6d, 0x80, 0x83, 0x09, 0x37, 0xea, 0xaa, 0x59, 0x13, 0x2f, 0x25, 0x24, 0x46, 0x4d, 0xb4,
-	0x74, 0x26, 0x4b, 0xc3, 0xee, 0x4e, 0xe9, 0x94, 0x55, 0xfc, 0x0b, 0x94, 0x78, 0xf0, 0x68, 0x4c,
-	0x48, 0x48, 0xfc, 0x03, 0xfc, 0x37, 0x38, 0x72, 0xf4, 0x34, 0xd1, 0xe5, 0x62, 0xf6, 0xb8, 0x47,
-	0x4f, 0xa6, 0x33, 0x5d, 0x5a, 0x89, 0x04, 0x34, 0xf1, 0xc7, 0xc1, 0xd3, 0xee, 0xfb, 0xe6, 0x7b,
-	0xef, 0xcd, 0x7c, 0xfd, 0x5e, 0x1e, 0xb8, 0xe1, 0x6d, 0x79, 0x6c, 0xd3, 0xc6, 0x24, 0x6c, 0xd2,
-	0xdd, 0x16, 0x69, 0xc7, 0x76, 0x67, 0x71, 0x83, 0xc4, 0xde, 0x62, 0x0e, 0xb2, 0xc2, 0x88, 0xc6,
-	0x14, 0x96, 0x05, 0xd5, 0xca, 0xe1, 0x29, 0xb5, 0x32, 0xdd, 0xa0, 0x0d, 0x2a, 0x48, 0x76, 0xf2,
-	0x4f, 0xf2, 0x2b, 0xb3, 0x67, 0x96, 0x6e, 0x44, 0x74, 0x27, 0x94, 0x2c, 0xf3, 0x95, 0x06, 0x2e,
-	0xdf, 0x67, 0x8d, 0x5b, 0x11, 0xf1, 0x62, 0x52, 0x3b, 0xe1, 0xc2, 0x75, 0xa0, 0x05, 0xb8, 0xac,
-	0x1a, 0x6a, 0x75, 0x7c, 0xe9, 0xba, 0x75, 0x56, 0x6b, 0x2b, 0xcb, 0xa8, 0xd7, 0x9c, 0x99, 0x43,
-	0x8e, 0x94, 0x2e, 0x47, 0x5a, 0xbd, 0xd6, 0xe3, 0x48, 0x0b, 0x70, 0x9f, 0xa3, 0xb1, 0x5d, 0xaf,
-	0xd5, 0x5c, 0x31, 0x03, 0x6c, 0xba, 0x5a, 0x80, 0xe1, 0x63, 0x30, 0x22, 0xba, 0xb3, 0xb2, 0x66,
-	0x0c, 0x55, 0xc7, 0x97, 0xae, 0x9d, 0x5d, 0xfa, 0x6e, 0xc2, 0x5b, 0x0b, 0x89, 0xef, 0xa0, 0xa4,
-	0x6e, 0x8f, 0xa3, 0x34, 0xb5, 0xcf, 0xd1, 0x84, 0xac, 0x2a, 0x63, 0xd3, 0x4d, 0x0f, 0xe0, 0x4d,
-	0x30, 0xda, 0x21, 0x11, 0x0b, 0x68, 0xbb, 0x3c, 0x64, 0xa8, 0xd5, 0xa2, 0x33, 0xd3, 0xe3, 0x68,
-	0x00, 0xf5, 0x39, 0x9a, 0x94, 0x69, 0x29, 0x60, 0xba, 0x83, 0xa3, 0x95, 0xc2, 0x97, 0x03, 0xa4,
-	0x0c, 0xb4, 0x58, 0x0f, 0xf1, 0x7f, 0x2d, 0xb6, 0x01, 0x4c, 0x6c, 0xd1, 0xa4, 0xec, 0xf7, 0x2b,
-	0x21, 0x5a, 0xaa, 0xe6, 0x07, 0x15, 0x14, 0xf3, 0x99, 0xf0, 0x29, 0x18, 0xa6, 0xcf, 0xda, 0x24,
-	0x12, 0x0d, 0x8b, 0xce, 0xbd, 0x1e, 0x47, 0x12, 0xe8, 0x73, 0x54, 0x94, 0x15, 0x44, 0x68, 0x7e,
-	0xe5, 0x68, 0xa1, 0x11, 0xc4, 0x9b, 0x3b, 0x1b, 0x96, 0x4f, 0x5b, 0xb6, 0x4f, 0x59, 0x8b, 0xb2,
-	0xf4, 0x67, 0x81, 0xe1, 0x2d, 0x3b, 0xde, 0x0d, 0x09, 0xb3, 0x56, 0x7d, 0x7f, 0x15, 0xe3, 0x88,
-	0x30, 0xe6, 0xca, 0x3a, 0x70, 0x19, 0x14, 0x30, 0x23, 0xdb, 0x65, 0xcd, 0x50, 0xab, 0x05, 0x07,
-	0x75, 0x39, 0x2a, 0xd4, 0xd6, 0xc8, 0x76, 0x8f, 0x23, 0x81, 0xf7, 0x39, 0x1a, 0x97, 0x7d, 0x92,
-	0xc8, 0x74, 0x05, 0xb8, 0x72, 0xe9, 0xed, 0x01, 0x52, 0xc4, 0x8d, 0xdf, 0x0d, 0x01, 0x90, 0x53,
-	0x27, 0x06, 0x13, 0x99, 0x18, 0x4f, 0x7e, 0x5a, 0xa8, 0xb9, 0x54, 0xa8, 0xef, 0x44, 0xf8, 0x91,
-	0x64, 0xc5, 0xac, 0x52, 0x1d, 0xc3, 0x47, 0x60, 0x98, 0xc5, 0x5e, 0x4c, 0xc4, 0x23, 0x26, 0x97,
-	0xe6, 0x2f, 0xd2, 0xcd, 0x5a, 0x4b, 0x32, 0x9c, 0xab, 0x89, 0xa2, 0x22, 0x39, 0x53, 0x54, 0x84,
-	0xa6, 0x2b, 0xe1, 0x5f, 0x76, 0x91, 0xf9, 0x02, 0x0c, 0x8b, 0x1e, 0x70, 0x0e, 0x8c, 0x06, 0xed,
-	0x8e, 0xd7, 0x0c, 0x70, 0x49, 0xa9, 0x54, 0xf6, 0xf6, 0x8d, 0x2b, 0xd9, 0x35, 0x04, 0xa3, 0x2e,
-	0x4f, 0xa1, 0x01, 0x46, 0x3c, 0x3f, 0x0e, 0x3a, 0xa4, 0xa4, 0x56, 0xa6, 0xf7, 0xf6, 0x8d, 0x52,
-	0xc6, 0x5b, 0x15, 0x78, 0xc2, 0xf0, 0x13, 0x43, 0xe2, 0x92, 0x76, 0x9a, 0x21, 0x8c, 0x8a, 0x2b,
-	0x85, 0x97, 0xef, 0x75, 0x25, 0x75, 0xf0, 0x81, 0x06, 0x60, 0x46, 0x70, 0x09, 0x0b, 0x69, 0x9b,
-	0x11, 0xd8, 0x02, 0x20, 0x93, 0x26, 0xfd, 0x42, 0xb3, 0x17, 0xd1, 0x4c, 0x7e, 0x9f, 0x1e, 0x47,
-	0xb9, 0xfc, 0x3e, 0x47, 0x53, 0xa9, 0x41, 0x4e, 0x30, 0xd3, 0xcd, 0x11, 0xe0, 0x83, 0x53, 0x43,
-	0x8e, 0xce, 0x19, 0xf2, 0x3f, 0x30, 0xe0, 0x03, 0xff, 0x2a, 0xe6, 0x67, 0x15, 0x4c, 0x65, 0x0f,
-	0xbc, 0x13, 0x34, 0x63, 0x12, 0xb1, 0x7f, 0x74, 0xec, 0xa0, 0x3d, 0xf0, 0x79, 0xf2, 0xda, 0xb1,
-	0xf3, 0xbd, 0x9b, 0xda, 0xe0, 0xb5, 0x0a, 0x26, 0x6f, 0x77, 0x12, 0x8b, 0x0c, 0x56, 0xdc, 0xdf,
-	0x99, 0x53, 0x79, 0x1d, 0xa7, 0x76, 0xd8, 0xd5, 0xd5, 0xa3, 0xae, 0xae, 0x7e, 0xea, 0xea, 0xea,
-	0x9b, 0x63, 0x5d, 0x39, 0x3a, 0xd6, 0x95, 0x8f, 0xc7, 0xba, 0xf2, 0x70, 0x3e, 0x27, 0x25, 0xed,
-	0x44, 0x7e, 0x73, 0xcb, 0x96, 0x1b, 0xfc, 0x79, 0x7e, 0x87, 0x0b, 0x49, 0x37, 0x46, 0xc4, 0xf2,
-	0x5e, 0xfe, 0x16, 0x00, 0x00, 0xff, 0xff, 0xe6, 0xca, 0x3a, 0x72, 0x3f, 0x08, 0x00, 0x00,
+	// 754 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x56, 0xcf, 0x4f, 0x13, 0x41,
+	0x14, 0xde, 0xdd, 0x16, 0x90, 0x47, 0xc1, 0x32, 0x12, 0x53, 0x57, 0xe9, 0x34, 0x2b, 0x91, 0x4a,
+	0xb4, 0x1b, 0x8a, 0xc6, 0x84, 0x9b, 0xb5, 0x6a, 0x7a, 0xe0, 0xb2, 0x84, 0xc4, 0xa8, 0x89, 0x59,
+	0xba, 0x63, 0xd9, 0xd0, 0x76, 0x97, 0xdd, 0xa5, 0x82, 0x07, 0xcf, 0x4a, 0x3c, 0x78, 0x34, 0x26,
+	0x24, 0x24, 0xfe, 0x03, 0xfe, 0x19, 0x1c, 0x39, 0x72, 0x9a, 0x98, 0x72, 0x31, 0x3d, 0xf6, 0x2f,
+	0x30, 0x3b, 0xb3, 0xed, 0x2e, 0x2d, 0xe5, 0x87, 0x89, 0x78, 0xf1, 0xd6, 0xf9, 0xe6, 0x7b, 0xef,
+	0x7b, 0xf3, 0xcd, 0x7b, 0x9d, 0x85, 0xbb, 0xfa, 0xba, 0xee, 0xae, 0xa9, 0x06, 0xb1, 0xab, 0xd6,
+	0x76, 0x8d, 0xd4, 0x3d, 0xb5, 0x31, 0xbf, 0x4a, 0x3c, 0x7d, 0x3e, 0x02, 0xe5, 0x6c, 0xc7, 0xf2,
+	0x2c, 0x94, 0x62, 0xd4, 0x5c, 0x04, 0x0f, 0xa8, 0xf2, 0x54, 0xc5, 0xaa, 0x58, 0x8c, 0xa4, 0xfa,
+	0xbf, 0x38, 0x5f, 0x9e, 0x19, 0x98, 0xba, 0xe2, 0x58, 0x9b, 0x36, 0x67, 0x29, 0x9f, 0x24, 0xb8,
+	0xb6, 0xe4, 0x56, 0x9e, 0x38, 0x44, 0xf7, 0x48, 0xb1, 0xcb, 0x45, 0x2b, 0x20, 0x99, 0x46, 0x4a,
+	0xcc, 0x88, 0xd9, 0xb1, 0xfc, 0x9d, 0xdc, 0x20, 0xe9, 0x5c, 0x18, 0x51, 0x2a, 0x16, 0xa6, 0xf7,
+	0x29, 0x16, 0x9a, 0x14, 0x4b, 0xa5, 0x62, 0x8b, 0x62, 0xc9, 0x34, 0xda, 0x14, 0x8f, 0x6e, 0xeb,
+	0xb5, 0xea, 0xa2, 0x62, 0x1a, 0x8a, 0x26, 0x99, 0x06, 0x7a, 0x0d, 0xc3, 0x4c, 0xdd, 0x4d, 0x49,
+	0x99, 0x58, 0x76, 0x2c, 0x7f, 0x7b, 0x70, 0xea, 0xe7, 0x3e, 0x6f, 0xd9, 0x26, 0xe5, 0x02, 0xf6,
+	0xf3, 0xb6, 0x28, 0x0e, 0x42, 0xdb, 0x14, 0x8f, 0xf3, 0xac, 0x7c, 0xad, 0x68, 0xc1, 0x06, 0x7a,
+	0x04, 0x23, 0x0d, 0xe2, 0xb8, 0xa6, 0x55, 0x4f, 0xc5, 0x32, 0x62, 0x36, 0x51, 0x98, 0x6e, 0x51,
+	0xdc, 0x81, 0xda, 0x14, 0x4f, 0xf0, 0xb0, 0x00, 0x50, 0xb4, 0xce, 0xd6, 0x62, 0xfc, 0xd7, 0x1e,
+	0x16, 0x94, 0x69, 0xb8, 0x79, 0x82, 0x15, 0x1a, 0x71, 0x6d, 0xab, 0xee, 0x92, 0x8e, 0x55, 0x2b,
+	0xb6, 0xf1, 0xdf, 0x2a, 0x6e, 0x55, 0xaf, 0x15, 0x5d, 0xab, 0x36, 0x00, 0xf9, 0x4e, 0x56, 0x2d,
+	0xf7, 0xef, 0x1b, 0x15, 0x54, 0x74, 0x0b, 0xe4, 0x7e, 0xc9, 0x6e, 0x41, 0x1f, 0x20, 0x11, 0x4d,
+	0x8b, 0x54, 0x18, 0xb2, 0xde, 0xd5, 0x89, 0xc3, 0xaa, 0x19, 0x2d, 0xdc, 0x68, 0x51, 0xcc, 0x81,
+	0x36, 0xc5, 0x09, 0x9e, 0x9e, 0x2d, 0x15, 0x8d, 0xc3, 0x68, 0x01, 0xe2, 0x86, 0x4b, 0x36, 0x52,
+	0x52, 0x46, 0xcc, 0xc6, 0x0b, 0xb8, 0x49, 0x71, 0xbc, 0xb8, 0x4c, 0x36, 0x5a, 0x14, 0x33, 0xbc,
+	0x4d, 0xf1, 0x18, 0x0f, 0xf3, 0x57, 0x8a, 0xc6, 0xc0, 0xc5, 0x2b, 0x5f, 0xf7, 0xb0, 0xc0, 0xaa,
+	0xfb, 0x16, 0x03, 0x88, 0x38, 0xe1, 0xc1, 0x78, 0x78, 0xf0, 0x37, 0x17, 0x36, 0x65, 0x36, 0x30,
+	0xe5, 0xd8, 0x99, 0x4e, 0xb2, 0x27, 0x11, 0x66, 0x2a, 0x19, 0xe8, 0x15, 0x0c, 0xb9, 0x9e, 0xee,
+	0x11, 0x76, 0x88, 0x89, 0xfc, 0xdc, 0x79, 0xd4, 0x72, 0xcb, 0x7e, 0x04, 0x37, 0x88, 0x05, 0x87,
+	0x06, 0xb1, 0xa5, 0xa2, 0x71, 0xf8, 0x8f, 0x1b, 0x4a, 0x79, 0x0f, 0x43, 0x4c, 0x03, 0xcd, 0xc2,
+	0x88, 0x59, 0x6f, 0xe8, 0x55, 0xd3, 0x48, 0x0a, 0xb2, 0xbc, 0xb3, 0x9b, 0xb9, 0x1e, 0x96, 0xc1,
+	0x18, 0x25, 0xbe, 0x8b, 0x32, 0x30, 0xac, 0x97, 0x3d, 0xb3, 0x41, 0x92, 0xa2, 0x3c, 0xb5, 0xb3,
+	0x9b, 0x49, 0x86, 0xbc, 0xc7, 0x0c, 0xf7, 0x19, 0x65, 0xbf, 0x13, 0x8c, 0xa4, 0xd4, 0xcb, 0x60,
+	0x1d, 0x62, 0xc8, 0xf1, 0x8f, 0xdf, 0xd3, 0x42, 0xd0, 0x3a, 0x7b, 0x12, 0xa0, 0xfe, 0x9e, 0x41,
+	0x35, 0x80, 0xd0, 0x9a, 0xe0, 0x86, 0x66, 0xce, 0xe3, 0x19, 0xbf, 0x9f, 0x16, 0xc5, 0x91, 0xf8,
+	0x36, 0xc5, 0x93, 0x41, 0x83, 0x74, 0x31, 0x45, 0x8b, 0x10, 0xd0, 0x8b, 0x9e, 0x79, 0xc7, 0x67,
+	0xcc, 0xfb, 0x25, 0xcc, 0x7a, 0xd8, 0xbf, 0x3f, 0x44, 0x98, 0x0c, 0x0f, 0xf8, 0xcc, 0xac, 0x7a,
+	0xc4, 0x71, 0x2f, 0x67, 0x8a, 0x7c, 0x15, 0xde, 0xb6, 0xb1, 0x50, 0xe5, 0xb4, 0x56, 0x0c, 0x6e,
+	0xf5, 0xb3, 0x08, 0x13, 0x4f, 0x1b, 0xfe, 0x8d, 0x77, 0xfe, 0xd0, 0xff, 0xcd, 0xd8, 0xf1, 0x72,
+	0xf2, 0x87, 0x31, 0x88, 0x2d, 0xb9, 0x15, 0xb4, 0x05, 0xc9, 0xbe, 0xc7, 0xf6, 0xfe, 0xe0, 0x02,
+	0x4e, 0x78, 0x90, 0xe4, 0x87, 0x17, 0xa2, 0x77, 0xfb, 0x79, 0x0b, 0x92, 0x7d, 0x6f, 0xd7, 0xe9,
+	0xca, 0xbd, 0xf4, 0x33, 0x94, 0x07, 0x3d, 0x07, 0x68, 0x13, 0xae, 0xf6, 0xbe, 0x05, 0xf7, 0x4e,
+	0x3f, 0xc3, 0x71, 0xb6, 0xfc, 0xe0, 0x22, 0xec, 0xae, 0xec, 0x5b, 0x00, 0xb6, 0xc5, 0xc6, 0x05,
+	0xcd, 0x9e, 0x9d, 0x83, 0x11, 0x65, 0xf5, 0x9c, 0xc4, 0x8e, 0x4e, 0xa1, 0xb8, 0xdf, 0x4c, 0x8b,
+	0x07, 0xcd, 0xb4, 0xf8, 0xb3, 0x99, 0x16, 0xbf, 0x1c, 0xa5, 0x85, 0x83, 0xa3, 0xb4, 0x70, 0x78,
+	0x94, 0x16, 0x5e, 0xce, 0x55, 0x4c, 0x6f, 0x6d, 0x73, 0x35, 0x57, 0xb6, 0x6a, 0xaa, 0xd5, 0x70,
+	0xca, 0xd5, 0x75, 0x95, 0x7f, 0x95, 0x6d, 0x45, 0xbf, 0xcb, 0xbc, 0x6d, 0x9b, 0xb8, 0xab, 0xc3,
+	0xec, 0x83, 0x6c, 0xe1, 0x77, 0x00, 0x00, 0x00, 0xff, 0xff, 0xf6, 0xd8, 0xb6, 0x30, 0x13, 0x0a,
+	0x00, 0x00,
 }
 
-func (this *MsgCloseDeployment) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
+// Reference imports to suppress errors if they are not otherwise used.
+var _ context.Context
+var _ grpc.ClientConn
 
-	that1, ok := that.(*MsgCloseDeployment)
-	if !ok {
-		that2, ok := that.(MsgCloseDeployment)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if !this.ID.Equal(&that1.ID) {
-		return false
-	}
-	return true
-}
-func (this *DeploymentID) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the grpc package it is being compiled against.
+const _ = grpc.SupportPackageIsVersion4
 
-	that1, ok := that.(*DeploymentID)
-	if !ok {
-		that2, ok := that.(DeploymentID)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if !bytes.Equal(this.Owner, that1.Owner) {
-		return false
-	}
-	if this.DSeq != that1.DSeq {
-		return false
-	}
-	return true
+// MsgClient is the client API for Msg service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type MsgClient interface {
+	// CreateDeployment defines a method to create new deployment given proper inputs.
+	CreateDeployment(ctx context.Context, in *MsgCreateDeployment, opts ...grpc.CallOption) (*MsgCreateDeploymentResponse, error)
+	// UpdateDeployment defines a method to update a deployment given proper inputs.
+	UpdateDeployment(ctx context.Context, in *MsgUpdateDeployment, opts ...grpc.CallOption) (*MsgUpdateDeploymentResponse, error)
+	// CloseDeployment defines a method to close a deployment given proper inputs.
+	CloseDeployment(ctx context.Context, in *MsgCloseDeployment, opts ...grpc.CallOption) (*MsgCloseDeploymentResponse, error)
+	// CloseGroup defines a method to close a group of a deployment given proper inputs.
+	CloseGroup(ctx context.Context, in *MsgCloseGroup, opts ...grpc.CallOption) (*MsgCloseGroupResponse, error)
 }
+
+type msgClient struct {
+	cc grpc1.ClientConn
+}
+
+func NewMsgClient(cc grpc1.ClientConn) MsgClient {
+	return &msgClient{cc}
+}
+
+func (c *msgClient) CreateDeployment(ctx context.Context, in *MsgCreateDeployment, opts ...grpc.CallOption) (*MsgCreateDeploymentResponse, error) {
+	out := new(MsgCreateDeploymentResponse)
+	err := c.cc.Invoke(ctx, "/akash.deployment.v1beta1.Msg/CreateDeployment", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) UpdateDeployment(ctx context.Context, in *MsgUpdateDeployment, opts ...grpc.CallOption) (*MsgUpdateDeploymentResponse, error) {
+	out := new(MsgUpdateDeploymentResponse)
+	err := c.cc.Invoke(ctx, "/akash.deployment.v1beta1.Msg/UpdateDeployment", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) CloseDeployment(ctx context.Context, in *MsgCloseDeployment, opts ...grpc.CallOption) (*MsgCloseDeploymentResponse, error) {
+	out := new(MsgCloseDeploymentResponse)
+	err := c.cc.Invoke(ctx, "/akash.deployment.v1beta1.Msg/CloseDeployment", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) CloseGroup(ctx context.Context, in *MsgCloseGroup, opts ...grpc.CallOption) (*MsgCloseGroupResponse, error) {
+	out := new(MsgCloseGroupResponse)
+	err := c.cc.Invoke(ctx, "/akash.deployment.v1beta1.Msg/CloseGroup", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// MsgServer is the server API for Msg service.
+type MsgServer interface {
+	// CreateDeployment defines a method to create new deployment given proper inputs.
+	CreateDeployment(context.Context, *MsgCreateDeployment) (*MsgCreateDeploymentResponse, error)
+	// UpdateDeployment defines a method to update a deployment given proper inputs.
+	UpdateDeployment(context.Context, *MsgUpdateDeployment) (*MsgUpdateDeploymentResponse, error)
+	// CloseDeployment defines a method to close a deployment given proper inputs.
+	CloseDeployment(context.Context, *MsgCloseDeployment) (*MsgCloseDeploymentResponse, error)
+	// CloseGroup defines a method to close a group of a deployment given proper inputs.
+	CloseGroup(context.Context, *MsgCloseGroup) (*MsgCloseGroupResponse, error)
+}
+
+// UnimplementedMsgServer can be embedded to have forward compatible implementations.
+type UnimplementedMsgServer struct {
+}
+
+func (*UnimplementedMsgServer) CreateDeployment(ctx context.Context, req *MsgCreateDeployment) (*MsgCreateDeploymentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateDeployment not implemented")
+}
+func (*UnimplementedMsgServer) UpdateDeployment(ctx context.Context, req *MsgUpdateDeployment) (*MsgUpdateDeploymentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateDeployment not implemented")
+}
+func (*UnimplementedMsgServer) CloseDeployment(ctx context.Context, req *MsgCloseDeployment) (*MsgCloseDeploymentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CloseDeployment not implemented")
+}
+func (*UnimplementedMsgServer) CloseGroup(ctx context.Context, req *MsgCloseGroup) (*MsgCloseGroupResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CloseGroup not implemented")
+}
+
+func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
+	s.RegisterService(&_Msg_serviceDesc, srv)
+}
+
+func _Msg_CreateDeployment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgCreateDeployment)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).CreateDeployment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/akash.deployment.v1beta1.Msg/CreateDeployment",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).CreateDeployment(ctx, req.(*MsgCreateDeployment))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_UpdateDeployment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUpdateDeployment)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).UpdateDeployment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/akash.deployment.v1beta1.Msg/UpdateDeployment",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).UpdateDeployment(ctx, req.(*MsgUpdateDeployment))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_CloseDeployment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgCloseDeployment)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).CloseDeployment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/akash.deployment.v1beta1.Msg/CloseDeployment",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).CloseDeployment(ctx, req.(*MsgCloseDeployment))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_CloseGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgCloseGroup)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).CloseGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/akash.deployment.v1beta1.Msg/CloseGroup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).CloseGroup(ctx, req.(*MsgCloseGroup))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _Msg_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "akash.deployment.v1beta1.Msg",
+	HandlerType: (*MsgServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateDeployment",
+			Handler:    _Msg_CreateDeployment_Handler,
+		},
+		{
+			MethodName: "UpdateDeployment",
+			Handler:    _Msg_UpdateDeployment_Handler,
+		},
+		{
+			MethodName: "CloseDeployment",
+			Handler:    _Msg_CloseDeployment_Handler,
+		},
+		{
+			MethodName: "CloseGroup",
+			Handler:    _Msg_CloseGroup_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "akash/deployment/v1beta1/deployment.proto",
+}
+
 func (m *MsgCreateDeployment) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -667,6 +934,29 @@ func (m *MsgCreateDeployment) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	}
 	i--
 	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgCreateDeploymentResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgCreateDeploymentResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgCreateDeploymentResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
 	return len(dAtA) - i, nil
 }
 
@@ -724,6 +1014,29 @@ func (m *MsgUpdateDeployment) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgUpdateDeploymentResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUpdateDeploymentResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUpdateDeploymentResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func (m *MsgCloseDeployment) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -754,6 +1067,29 @@ func (m *MsgCloseDeployment) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	}
 	i--
 	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgCloseDeploymentResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgCloseDeploymentResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgCloseDeploymentResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
 	return len(dAtA) - i, nil
 }
 
@@ -998,6 +1334,15 @@ func (m *MsgCreateDeployment) Size() (n int) {
 	return n
 }
 
+func (m *MsgCreateDeploymentResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
 func (m *MsgUpdateDeployment) Size() (n int) {
 	if m == nil {
 		return 0
@@ -1019,6 +1364,15 @@ func (m *MsgUpdateDeployment) Size() (n int) {
 	return n
 }
 
+func (m *MsgUpdateDeploymentResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
 func (m *MsgCloseDeployment) Size() (n int) {
 	if m == nil {
 		return 0
@@ -1027,6 +1381,15 @@ func (m *MsgCloseDeployment) Size() (n int) {
 	_ = l
 	l = m.ID.Size()
 	n += 1 + l + sovDeployment(uint64(l))
+	return n
+}
+
+func (m *MsgCloseDeploymentResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
 	return n
 }
 
@@ -1276,6 +1639,59 @@ func (m *MsgCreateDeployment) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *MsgCreateDeploymentResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowDeployment
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgCreateDeploymentResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgCreateDeploymentResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipDeployment(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthDeployment
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthDeployment
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *MsgUpdateDeployment) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1430,6 +1846,59 @@ func (m *MsgUpdateDeployment) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *MsgUpdateDeploymentResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowDeployment
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUpdateDeploymentResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUpdateDeploymentResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipDeployment(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthDeployment
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthDeployment
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *MsgCloseDeployment) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1516,6 +1985,59 @@ func (m *MsgCloseDeployment) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *MsgCloseDeploymentResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowDeployment
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgCloseDeploymentResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgCloseDeploymentResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipDeployment(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthDeployment
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthDeployment
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *DeploymentID) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1549,7 +2071,7 @@ func (m *DeploymentID) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Owner", wireType)
 			}
-			var byteLen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowDeployment
@@ -1559,25 +2081,23 @@ func (m *DeploymentID) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if byteLen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthDeployment
 			}
-			postIndex := iNdEx + byteLen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthDeployment
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Owner = append(m.Owner[:0], dAtA[iNdEx:postIndex]...)
-			if m.Owner == nil {
-				m.Owner = []byte{}
-			}
+			m.Owner = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 0 {
@@ -1948,7 +2468,7 @@ func (m *DeploymentFilters) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Owner", wireType)
 			}
-			var byteLen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowDeployment
@@ -1958,25 +2478,23 @@ func (m *DeploymentFilters) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if byteLen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthDeployment
 			}
-			postIndex := iNdEx + byteLen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthDeployment
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Owner = append(m.Owner[:0], dAtA[iNdEx:postIndex]...)
-			if m.Owner == nil {
-				m.Owner = []byte{}
-			}
+			m.Owner = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 0 {
