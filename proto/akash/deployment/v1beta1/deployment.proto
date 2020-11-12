@@ -134,10 +134,7 @@ message DeploymentFilters {
 message EventCreateDep {
   option (gogoproto.equal) = false;
 
-  DeploymentID deployment_id = 1 [
-    (gogoproto.nullable)   = false,
-    (gogoproto.customname) = "DeploymentID",
-    (gogoproto.jsontag)    = "id",
-    (gogoproto.moretags)   = "yaml:\"id\""
-  ];
+  string owner = 1 [(gogoproto.jsontag) = "owner", (gogoproto.moretags) = "yaml:\"owner\""];
+  uint64 dseq  = 2
+      [(gogoproto.customname) = "DSeq", (gogoproto.jsontag) = "dseq", (gogoproto.moretags) = "yaml:\"dseq\""];
 }

@@ -107,7 +107,8 @@ func (k Keeper) Create(ctx sdk.Context, deployment types.Deployment, groups []ty
 
 	ctx.EventManager().EmitTypedEvent(
 		&types.EventCreateDep{
-			DeploymentID: deployment.ID(),
+			Owner: deployment.DeploymentID.Owner,
+			DSeq:  deployment.DeploymentID.DSeq,
 		},
 	)
 
