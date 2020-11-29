@@ -20,7 +20,8 @@ tutorial.
 ```sh
 GCLOUD_PROJECT=testnet-provider
 GCLOUD_DNS_ZONE=akashian-io
-GCLOUD_DNS_DOMAIN=akashian.io
+GCLOUD_DNS_DOMAIN=w1.akashian.io
+GCLOUD_ZONE=us-west1-a
 ```
 
 Configure `gcloud` project and default regions

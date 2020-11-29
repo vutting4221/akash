@@ -7,10 +7,6 @@ spec:
     - host: akash-provider.localhost
       http:
         paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: akash-provider
-                port:
-                  name: http
+          - backend:
+              serviceName: akash-provider
+              servicePort: http

@@ -63,10 +63,13 @@ This `PROVIDER_DOMAIN` variable is used to configure the Kubernetes Ingress Cont
 We'll be connecting to the testnet.
 
 ```sh
-export AKASH_NODE=tcp://rpc-edgenet.akashdev.net:26657
-export AKASH_CHAIN_ID=edgenet
+AKASH_NET_BASE=https://raw.githubusercontent.com/ovrclk/net/master
+AKASH_NET="$AKASH_NET_BASE/edgenet"
+export AKASH_NODE="$(curl -s "$AKASH_NET/rpc-nodes.txt" | shuf -n 1)"
+export AKASH_CHAIN_ID="$(curl -s "$AKASH_NET/chain-id.txt")"
 export AKASH_KEYRING_BACKEND=test
 export AKASH_PROVIDER_KEY=provider
+export AKASH_VERSION="$(curl -s "$AKASH_NET/version.txt")"
 ```
 
 ## Deploy Provider Services
@@ -74,7 +77,7 @@ export AKASH_PROVIDER_KEY=provider
 ### Download `akash` binary
 
 ```sh
-curl -sSfL https://raw.githubusercontent.com/ovrclk/akash/master/godownloader.sh | sh
+curl -sSfL https://raw.githubusercontent.com/ovrclk/akash/master/godownloader.sh | sh -s -- "$AKASH_VERSION"
 ```
 
 ### Configure Akash Client
@@ -113,7 +116,9 @@ EOF
 View your address with
 
 ```sh
-akash keys show provider -a --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND 
+akash keys show provider -a \
+  --home=$AKASH_HOME \
+  --keyring-backend=$AKASH_KEYRING_BACKEND 
 ```
 
 You can fund the address at the testnet [faucet](https://akash.vitwit.com/faucet).
@@ -121,7 +126,10 @@ You can fund the address at the testnet [faucet](https://akash.vitwit.com/faucet
 Ensure you have funds with:
 
 ```sh
-akash query bank balances --home=$AKASH_HOME --node=$AKASH_NODE "$(akash keys show $AKASH_PROVIDER_KEY -a --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND )"
+akash query bank balances \
+  --home=$AKASH_HOME \
+  --node=$AKASH_NODE \
+  "$(akash keys show $AKASH_PROVIDER_KEY -a --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND )"
 ```
 
 ### Create Akash Provider
