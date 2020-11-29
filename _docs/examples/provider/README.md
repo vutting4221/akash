@@ -24,7 +24,7 @@ Installed commands:
 
 ### Working Directory
 
-Create staging directory and cd into it
+Create staging directory and cd into it.
 
 ```sh
 mkdir akash-demo && cd akash-demo
@@ -67,6 +67,7 @@ export AKASH_NODE=tcp://rpc-edgenet.akashdev.net:26657
 export AKASH_CHAIN_ID=edgenet
 export AKASH_KEYRING_BACKEND=test
 export AKASH_PROVIDER_KEY=provider
+export DEPLOY_KEY=deploy
 ```
 
 ## Deploy Provider Services
@@ -211,7 +212,7 @@ akash provider status --node=$AKASH_NODE --provider "$(akash keys show $AKASH_PR
 ### Create key for deployment
 
 ```sh
-./bin/akash keys add deploy --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND 
+./bin/akash keys add $DEPLOY_KEY --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND 
 ```
 
 ### Fund your deployment account
@@ -219,7 +220,7 @@ akash provider status --node=$AKASH_NODE --provider "$(akash keys show $AKASH_PR
 View your address with
 
 ```sh
-./bin/akash keys show deploy -a --home=$AKASH_HOME --keyring-backend$AKASH_KEYRING_BACKEND 
+./bin/akash keys show $DEPLOY_KEY -a --home=$AKASH_HOME --keyring-backend$AKASH_KEYRING_BACKEND 
 ```
 
 You can fund the address at the testnet [faucet](https://akash.vitwit.com/faucet).
@@ -227,7 +228,7 @@ You can fund the address at the testnet [faucet](https://akash.vitwit.com/faucet
 Ensure you have funds with:
 
 ```sh
-./bin/akash query account --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND --node=$AKASH_NODE "$(./bin/akash keys show deploy -a  --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND )"
+akash query account --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND --node=$AKASH_NODE "$(akash keys show $DEPLOY_KEY -a  --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND)"
 ```
 
 ### Download Akash SDL file
@@ -246,25 +247,25 @@ sed -i.bak "s/us-west/us-west-demo-$(whoami)/g" deployment.yaml
 ### Create Deployment
 
 ```sh
-./bin/akash --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND --chain-id=$AKASH_CHAIN_ID --node=$AKASH_NODE --from deploy tx deployment create ./deployment.yaml 
+akash --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND --chain-id=$AKASH_CHAIN_ID --node=$AKASH_NODE --from $DEPLOY_KEY tx deployment create ./deployment.yaml 
 ```
 
 ### View Order
 
 ```sh
-akash query market order list --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND --owner "$(akash keys show deploy -a --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND)"
+akash query market order list --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND --owner "$(akash keys show $DEPLOY_KEY -a --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND)"
 ```
 
 ### View Bids
 
 ```sh
-akash query market bid list --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND --owner "$(akash keys show deploy -a --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND)"
+akash query market bid list --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND --owner "$(akash keys show $DEPLOY_KEY -a --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND)"
 ```
 
 ### View Leases
 
 ```sh
-akash query market lease list --node=$AKASH_NODE --owner "$(akash keys show deploy -a --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND)"
+akash query market lease list --node=$AKASH_NODE --owner "$(akash keys show $DEPLOY_KEY -a --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND)"
 ```
 
 ### Capture Deployment Sequence
@@ -274,7 +275,7 @@ block height at that time.
 
 ```sh
 DSEQ="$(akash query market lease list --node=$AKASH_NODE --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND  \
-  --owner "$(akash keys show deploy -a --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND )" \
+  --owner "$(akash keys show $DEPLOY_KEY -a --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND )" \
   | jq -r '.[0].id.dseq')"
 ```
 
@@ -282,39 +283,34 @@ DSEQ="$(akash query market lease list --node=$AKASH_NODE --home=$AKASH_HOME --ke
 
 ```sh
 akash provider send-manifest deployment.yaml --node=$AKASH_NODE \
-  --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND \
   --dseq "$DSEQ" \
   --oseq 1 \
   --gseq 1 \
-  --owner    "$(./bin/akash keys show deploy -a)" \
-  --provider "$(./bin/akash keys show provider -a)"
+  --owner    "$(akash --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND keys show $DEPLOY_KEY -a)" \
+  --provider "$(akash --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND keys show $AKASH_PROVIDER_KEY -a)"
 ```
 
 ### View Lease Status
 
 ```sh
 akash provider lease-status --node=$AKASH_NODE \
-  --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND \
   --dseq "$DSEQ" \
   --oseq 1 \
   --gseq 1 \
-  --owner    "$(./bin/akash keys show deploy -a)" \
-  --provider "$(./bin/akash keys show provider -a)"
+  --owner    "$(akash keys show $DEPLOY_KEY -a --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND)"     \
+  --provider "$(akash keys show $AKASH_PROVIDER_KEY -a --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND)" 
 ```
 
 ### View Site
 
 ```sh
-akash provider lease-status \
+akash provider lease-status --node=$AKASH_NODE \
   --dseq "$DSEQ" \
   --oseq 1 \
   --gseq 1 \
-  --owner    "$(./bin/akash keys show deploy -a)"     \
-  --provider "$(./bin/akash keys show provider -a)" | \
-  jq -r '.services[0].uris[0]' | \
-  while read -r line; do 
-    open "http://$line" 
-  done
+  --owner    "$(akash keys show $DEPLOY_KEY -a --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND)"     \
+  --provider "$(akash keys show $AKASH_PROVIDER_KEY -a --home=$AKASH_HOME --keyring-backend=$AKASH_KEYRING_BACKEND)" | \
+  jq '.services[].uris'
 ```
 
 ### Delete Deployment

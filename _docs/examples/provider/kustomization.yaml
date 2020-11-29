@@ -9,7 +9,7 @@ images:
     ##
     # akash version
     ##
-    newTag: 0.9.0-rc3
+    newTag: 0.9.0-rc10
 
 configMapGenerator:
 
@@ -32,7 +32,7 @@ configMapGenerator:
   - name: akash-provider-config
     behavior: merge
     literals:
-      - cluster-node-port-quantity=100
+      - cluster-node-port-quantity=500
       - bid-price-strategy=randomRange
     ##
     # place overrides in provider-config.txt
