@@ -45,7 +45,7 @@ func cmdCreateBid(key string) *cobra.Command {
 				return err
 			}
 
-			coins, err := sdk.ParseCoin(price)
+			coins, err := sdk.ParseCoinNormalized(price)
 			if err != nil {
 				return err
 			}
