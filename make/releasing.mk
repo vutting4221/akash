@@ -35,7 +35,9 @@ docker-image:
 		-f .goreleaser-docker.yaml --rm-dist --skip-validate --skip-publish --snapshot
 
 .PHONY: release-dry-run
-release-dry-run: modvendor
+release-dry-run: $(GIT_CHGLOG) modvendor
+	@echo "generating changelog to .cache/changelog"
+	./script/genchangelog.sh "$(GORELEASER_TAG)" > .cache/changelog
 	docker run \
 		--rm \
 		--privileged \
@@ -48,14 +50,16 @@ release-dry-run: modvendor
 		-v `pwd`:/go/src/github.com/ovrclk/akash \
 		-w /go/src/github.com/ovrclk/akash \
 		troian/golang-cross:${GOLANG_CROSS_VERSION} \
-		-f "$(GORELEASER_CONFIG)" --skip-validate=$(GORELEASER_SKIP_VALIDATE) --rm-dist --skip-publish
+		-f "$(GORELEASER_CONFIG)" --skip-validate=$(GORELEASER_SKIP_VALIDATE) --rm-dist --skip-publish --release-notes=/go/src/github.com/ovrclk/akash/.cache/changelog
 
 .PHONY: release
-release: modvendor
+release: $(GIT_CHGLOG) modvendor
 	@if [ ! -f ".release-env" ]; then \
 		echo "\033[91m.release-env is required for release\033[0m";\
 		exit 1;\
 	fi
+	@echo "generating changelog to .cache/changelog"
+	./script/genchangelog.sh "$(GORELEASER_TAG)" > .cache/changelog
 	docker run \
 		--rm \
 		--privileged \
@@ -69,4 +73,4 @@ release: modvendor
 		-v `pwd`:/go/src/github.com/ovrclk/akash \
 		-w /go/src/github.com/ovrclk/akash \
 		troian/golang-cross:${GOLANG_CROSS_VERSION} \
-		-f "$(GORELEASER_CONFIG)" release --rm-dist
+		-f "$(GORELEASER_CONFIG)" release --rm-dist --release-notes <(./script/genchangelog.sh "$(GORELEASER_TAG)")

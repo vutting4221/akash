@@ -43,6 +43,7 @@ PROTOC                         := $(CACHE_BIN)/protoc
 STATIK                         := $(CACHE_BIN)/statik
 PROTOC_GEN_COSMOS              := $(CACHE_BIN)/protoc-gen-cosmos
 GRPC_GATEWAY                   := $(CACHE_BIN)/protoc-gen-grpc-gateway
+GIT_CHGLOG                     := $(CACHE_BIN)/git-chglog
 
 DOCKER_RUN            := docker run --rm -v $(shell pwd):/workspace -w /workspace
 DOCKER_BUF            := $(DOCKER_RUN) bufbuild/buf:$(BUF_VERSION)

@@ -52,6 +52,10 @@ $(MODVENDOR): $(CACHE)
 	@echo "installing modvendor..."
 	GOBIN=$(CACHE_BIN) GO111MODULE=off go get github.com/goware/modvendor
 
+$(GIT_CHGLOG): $(CACHE)
+	@echo "installing git-chglog..."
+	GOBIN=$(CACHE_BIN) GO111MODULE=off go get -u github.com/git-chglog/git-chglog/cmd/git-chglog
+
 $(SWAGGER_COMBINE): $(CACHE)
 ifeq (, $(shell which swagger-combine 2>/dev/null))
 	@echo "Installing swagger-combine..."
