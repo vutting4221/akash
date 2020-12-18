@@ -3,14 +3,15 @@ package cluster
 import (
 	"context"
 	"fmt"
-	"sync"
-
 	lifecycle "github.com/boz/go-lifecycle"
 	"github.com/ovrclk/akash/manifest"
 	"github.com/ovrclk/akash/provider/session"
 	"github.com/ovrclk/akash/pubsub"
 	mtypes "github.com/ovrclk/akash/x/market/types"
 	"github.com/tendermint/tendermint/libs/log"
+	"math"
+	"sync"
+	"time"
 )
 
 type deploymentState string
@@ -93,6 +94,8 @@ func (dm *deploymentManager) teardown() error {
 func (dm *deploymentManager) run() {
 	defer dm.lc.ShutdownCompleted()
 	runch := dm.startDeploy()
+	teardownAttempts := 0
+	const maxTeardownAttempts = 5
 
 loop:
 	for {
@@ -126,17 +129,41 @@ loop:
 			}
 			switch dm.state {
 			case dsDeployActive:
+				if result != nil {
+					break loop
+				}
 				dm.log.Debug("deploy complete")
 				dm.state = dsDeployComplete
 				dm.startMonitor()
 			case dsDeployPending:
+				if result != nil {
+					break loop
+				}
 				// start update
 				runch = dm.startDeploy()
 			case dsDeployComplete:
 				panic(fmt.Sprintf("INVALID STATE: runch read on %v", dm.state))
 			case dsTeardownActive:
-				dm.state = dsTeardownComplete
-				break loop
+				// Teardown completed OK
+				if result == nil {
+					dm.state = dsTeardownComplete
+					break loop
+				}
+
+				// Check to see if the limit on the number of attepmts has been reached
+				if teardownAttempts == maxTeardownAttempts {
+					dm.log.Error("could not teardown lease")
+					break loop
+				}
+
+				// Wait before trying again
+				delay := time.Second * time.Duration(1+math.Exp2(float64(teardownAttempts)))
+				dm.log.Info("Trying teardown again", "delay", delay)
+				time.Sleep(delay)
+				// Start another attempt
+				teardownAttempts++
+				runch = dm.startTeardown()
+
 			case dsTeardownPending:
 				// start teardown
 				runch = dm.startTeardown()
