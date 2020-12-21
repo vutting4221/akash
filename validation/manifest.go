@@ -63,6 +63,8 @@ func validateManifestGroup(group manifest.Group, helper *validateManifestGroupsH
 	return nil
 }
 
+var envVarValidatorRegex = regexp.MustCompile(`^[-._a-zA-Z][-._a-zA-Z0-9]*$`)
+
 func validateManifestService(service manifest.Service, helper *validateManifestGroupsHelper) error {
 	if len(service.Name) == 0 {
 		return fmt.Errorf("%w: service name is empty", ErrInvalidManifest)
@@ -77,6 +79,19 @@ func validateManifestService(service manifest.Service, helper *validateManifestG
 		if idx == 0 {
 			return fmt.Errorf("%w: service %q defines an env. var. with an empty name", ErrInvalidManifest, service.Name)
 		}
+
+		var envVarName string
+		if idx > 0 {
+			envVarName = envVar[0:idx]
+		} else {
+			envVarName = envVar
+		}
+
+		matches := envVarValidatorRegex.MatchString(envVarName)
+		if !matches {
+			return fmt.Errorf("%w: service %q defines an env. var. with an invalid name %q", ErrInvalidManifest, service.Name, envVarName)
+		}
+
 	}
 
 	for _, serviceExpose := range service.Expose {
